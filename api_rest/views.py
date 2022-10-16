@@ -1,9 +1,11 @@
 from hashlib import new
 from venv import create
+from flask_jwt_extended import create_access_token
 from flask import request, abort
 from models import db, User, UserSchema
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError, StatementError
+
 import datetime
 
 user_schema = UserSchema()
@@ -20,6 +22,7 @@ class BadRequestException(Exception):
     def to_dict(self):
         rv = dict(self.payload or ())
         rv['message'] = self.message
+        rv['code'] = self.status_code
         return rv
 
 class SignInView(Resource):
@@ -34,10 +37,29 @@ class SignInView(Resource):
             new_user = User(username=request.json["username"], password = password1, email=request.json["email"], create_at = datetime.datetime.now())
             db.session.add(new_user)
             db.session.commit()
-            
+
             return {"message":"Usuario creado correctamente"}, 201
 
         except Exception as ex:
             db.session.rollback()
             raise BadRequestException(format(ex))
 
+class LogInView(Resource):
+
+    def post(self):
+        try:
+            user = User.query.filter(User.username == request.json["username"],
+                                 User.password == request.json["password"]).first()
+            if user is None:
+                raise Exception("Username or password incorrect")
+            else:
+                token_de_acceso = create_access_token(identity=user.id)
+
+                data = {
+                    "message": "Authenticaion succed", 
+                    "JWT": token_de_acceso
+                }
+            return data
+        except Exception as ex:
+            db.session.rollback()
+            raise BadRequestException(format(ex))
