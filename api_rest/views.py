@@ -1,10 +1,11 @@
 from hashlib import new
 from venv import create
-from flask_jwt_extended import create_access_token
-from flask import request, abort
-from models import db, User, UserSchema
+from flask_jwt_extended import create_access_token,jwt_required
+from flask import request, abort, send_from_directory
+from models import db, User, UserSchema,Task
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError, StatementError
+from os import remove,path
 
 import datetime
 
@@ -63,3 +64,71 @@ class LogInView(Resource):
         except Exception as ex:
             db.session.rollback()
             raise BadRequestException(format(ex))
+        
+class TaskView(Resource):
+    @jwt_required()
+    def delete(self,id_task):
+        miusuario = "oscar"
+        mipath = "archivos"
+        tarea = Task.query.filter(Task.username == miusuario,
+                                 Task.id_task == id_task).first()
+        
+        if tarea is None:
+            data = {
+                "message": "No encontrado", 
+                "JWT": "listo"
+            }
+            return data,404
+        else:
+            archivo = path.join(mipath, tarea.filename_input)
+            archivo2 = path.join(mipath, tarea.filename_output)
+            estado = tarea.status
+            mitarea = tarea.id_task
+            if estado == "processed":
+                if path.exists(archivo):
+                    if path.exists(archivo2):
+                        remove(archivo)
+                        remove(archivo2)
+                        if not path.exists(archivo) and not path.exists(archivo2):
+                            data = {
+                                "message": "Deleted files "+archivo + " " + archivo2, 
+                                "id_task": mitarea
+                            }
+                        else:
+                            data = {
+                                "message": "Files could not be deleted "+archivo + " " + archivo2, 
+                                "id_task": mitarea
+                            }
+                            return data,404
+                    else:
+                        data = {
+                            "message": "File 2 not found: "+ archivo2, 
+                            "id_task": mitarea
+                        }
+                        return data,404
+                else:
+                    data = {
+                        "message": "File 1 not found "+ archivo, 
+                        "id_task": mitarea
+                    }
+                    return data,404
+            else:
+                data = {
+                        "message": "The files cannot be deleted because the status is not processed", 
+                        "id_task": mitarea
+                    }
+                return data,404
+            
+        return data
+
+class FileView(Resource):    
+    @jwt_required()
+    def get(self,filename):    
+        mipath = "archivos"
+        if path.isfile(path.join(mipath, filename)):
+            return send_from_directory(mipath, filename, as_attachment=True)
+        data = {
+                    "message":"File not found ", 
+                    "filename": filename
+                }
+        return data,404

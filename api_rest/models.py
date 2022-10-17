@@ -17,3 +17,12 @@ class UserSchema(SQLAlchemyAutoSchema):
          model = User
          include_relationships = True
          load_instance = True
+         
+class Task(db.Model):
+    id_task = db.Column(db.Integer, primary_key=True)
+    create_at = db.Column(db.DateTime)
+    status = db.Column(db.String(10))
+    filename_input = db.Column(db.String(255))
+    filename_output = db.Column(db.String(255))
+    username = db.Column(db.String(50))
+    guid =  db.Column(db.String(255))
