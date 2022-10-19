@@ -73,7 +73,7 @@ class TaskView(Resource):
         usuario = User.query.filter(User.id == get_jwt_identity()).first()
         tarea = Task.query.filter( Task.username == usuario.username, 
                                     Task.id_task == id_task).first()
-        return task_schema.dumps(tarea)
+        return task_schema.dump(tarea)
 
     @jwt_required()
     def delete(self,id_task):

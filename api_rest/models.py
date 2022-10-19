@@ -29,6 +29,6 @@ class UserSchema(SQLAlchemyAutoSchema):
 
 class TaskSchema(SQLAlchemyAutoSchema):
     class Meta:
-         model = User
+         model = Task
          include_relationships = True
          load_instance = True
