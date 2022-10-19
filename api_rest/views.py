@@ -1,8 +1,8 @@
 from hashlib import new
 from venv import create
-from flask_jwt_extended import create_access_token,jwt_required
+from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity
 from flask import request, abort, send_from_directory
-from models import db, User, UserSchema,Task
+from models import db, User, UserSchema, Task, TaskSchema
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError, StatementError
 from os import remove,path
@@ -10,6 +10,7 @@ from os import remove,path
 import datetime
 
 user_schema = UserSchema()
+task_schema = TaskSchema()
 
 class BadRequestException(Exception):
     status_code = 400
@@ -66,6 +67,14 @@ class LogInView(Resource):
             raise BadRequestException(format(ex))
         
 class TaskView(Resource):
+
+    @jwt_required()
+    def get(self, id_task):
+        usuario = User.query.filter(User.id == get_jwt_identity()).first()
+        tarea = Task.query.filter( Task.username == usuario.username, 
+                                    Task.id_task == id_task).first()
+        return task_schema.dumps(tarea)
+
     @jwt_required()
     def delete(self,id_task):
         miusuario = "oscar"
