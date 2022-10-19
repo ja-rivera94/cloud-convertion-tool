@@ -73,8 +73,46 @@ class TaskView(Resource):
         usuario = User.query.filter(User.id == get_jwt_identity()).first()
         tarea = Task.query.filter( Task.username == usuario.username, 
                                     Task.id_task == id_task).first()
-        return task_schema.dump(tarea)
+        return task_schema.dump(tarea), 200
 
+    @jwt_required()
+    def put(self, id_task):
+        usuario = User.query.filter(User.id == get_jwt_identity()).first()
+        mipath = "archivos"
+        tarea = Task.query.filter( Task.username == usuario.username, 
+                                    Task.id_task == id_task).first()
+        if not "newFormat" in request.json:
+            data = {
+                "message": "New Format is mandatory", 
+            }
+            return data, 404
+        else:
+            if tarea is None:
+                data = {
+                    "message": "Task does not exists",
+                    "JWT": "listo"
+                }
+                return data, 400
+            else:
+                archivo = path.join(mipath, tarea.filename_input)
+                estado = tarea.status
+                mitarea = tarea.id_task
+                if estado == "processed":
+                    if path.exists(archivo):
+                        remove(archivo)
+                    else:
+                        data = {
+                            "message": "File 1 not found "+ archivo, 
+                            "id_task": mitarea
+                        }
+                        return data,404
+
+                tarea.filename_output = request.json["newFormat"]
+                tarea.status = "uploaded"
+                db.session.commit()
+
+                return task_schema.dump(tarea), 200
+        
     @jwt_required()
     def delete(self,id_task):
         miusuario = "oscar"
