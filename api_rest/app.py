@@ -1,7 +1,7 @@
 import os
 from flask_restful import Api
 from flask import Flask, jsonify
-from views import SignInView, BadRequestException, LogInView,TaskView,FileView
+from views import SignInView, BadRequestException, LogInView,TaskView,FileView,TaskAllView
 from models import db
 from flask_jwt_extended import JWTManager
 
@@ -23,6 +23,7 @@ api.add_resource(LogInView, '/auth/login')
 api.add_resource(TaskView, '/api/tasks/<int:id_task>')
 api.add_resource(FileView, '/api/files/<path:filename>')
 api.add_resource(TaskView, '/api/tasks', endpoint ='/api/tasks')
+api.add_resource(TaskAllView, '/api/tasks/', endpoint ='/api/tasks/')
 
 jwt = JWTManager(app)
 
