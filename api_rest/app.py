@@ -22,6 +22,7 @@ api.add_resource(SignInView, '/auth/signup')
 api.add_resource(LogInView, '/auth/login')
 api.add_resource(TaskView, '/api/tasks/<int:id_task>')
 api.add_resource(FileView, '/api/files/<path:filename>')
+api.add_resource(TaskView, '/api/tasks', endpoint ='/api/tasks')
 
 jwt = JWTManager(app)
 

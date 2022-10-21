@@ -5,12 +5,22 @@ from flask import request, abort, send_from_directory
 from models import db, User, UserSchema, Task, TaskSchema
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError, StatementError
+import os
 from os import remove,path
+from werkzeug.utils import secure_filename
+import uuid
 
 import datetime
 
 user_schema = UserSchema()
 task_schema = TaskSchema()
+
+#MP3 - ACC - OGG - WAV – WMA
+ALLOWED_EXTENSIONS = set(['mp3', 'aac', 'ogg', 'wav', 'wma'])
+UPLOAD_FOLDER = '/tmp/uploads'
+
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 class BadRequestException(Exception):
     status_code = 400
@@ -76,9 +86,30 @@ class TaskView(Resource):
         return task_schema.dump(tarea), 200
 
     @jwt_required()
+    def post(self):
+        fileName = 'fileName'
+        if fileName not in request.files:
+            return {'message' : 'No file part in the request'}, 400
+        file = request.files[fileName]
+        if file.filename == '':
+            return {'message' : 'No file selected for uploading'}, 400
+        if file and allowed_file(file.filename):
+            guid = str(uuid.uuid4())
+            filename = guid + "-" + secure_filename(file.filename)
+            filename_output = filename + "."+ str(request.form.get('newFormat'))
+        
+            task = Task(create_at = datetime.datetime.now(), status= "uploaded", filename_input=filename, filename_output=filename_output, username = get_jwt_identity(), guid = guid)
+            db.session.add(task)
+            db.session.commit()
+
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            return {'message' : 'File successfully uploaded'}, 201
+        else:
+            return {'message' : 'Not Allowed file type'}, 400
+
+    @jwt_required()
     def put(self, id_task):
         usuario = User.query.filter(User.id == get_jwt_identity()).first()
-        mipath = "archivos"
         tarea = Task.query.filter( Task.username == usuario.username, 
                                     Task.id_task == id_task).first()
         if not "newFormat" in request.json:
@@ -94,7 +125,7 @@ class TaskView(Resource):
                 }
                 return data, 400
             else:
-                archivo = path.join(mipath, tarea.filename_input)
+                archivo = path.join(UPLOAD_FOLDER, tarea.filename_input)
                 estado = tarea.status
                 mitarea = tarea.id_task
                 if estado == "processed":
@@ -116,10 +147,8 @@ class TaskView(Resource):
     @jwt_required()
     def delete(self,id_task):
         miusuario = "oscar"
-        mipath = "archivos"
         tarea = Task.query.filter(Task.username == miusuario,
                                  Task.id_task == id_task).first()
-        
         if tarea is None:
             data = {
                 "message": "No encontrado", 
@@ -127,8 +156,8 @@ class TaskView(Resource):
             }
             return data,404
         else:
-            archivo = path.join(mipath, tarea.filename_input)
-            archivo2 = path.join(mipath, tarea.filename_output)
+            archivo = path.join(UPLOAD_FOLDER, tarea.filename_input)
+            archivo2 = path.join(UPLOAD_FOLDER, tarea.filename_output)
             estado = tarea.status
             mitarea = tarea.id_task
             if estado == "processed":
@@ -171,9 +200,8 @@ class TaskView(Resource):
 class FileView(Resource):    
     @jwt_required()
     def get(self,filename):    
-        mipath = "archivos"
-        if path.isfile(path.join(mipath, filename)):
-            return send_from_directory(mipath, filename, as_attachment=True)
+        if path.isfile(path.join(UPLOAD_FOLDER, filename)):
+            return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=True)
         data = {
                     "message":"File not found ", 
                     "filename": filename
