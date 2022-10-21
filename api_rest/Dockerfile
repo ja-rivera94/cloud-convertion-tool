@@ -1,5 +1,6 @@
 FROM python:3
 RUN mkdir /usr/src/app/
+RUN mkdir /tmp/uploads
 COPY . /usr/src/app/
 WORKDIR /usr/src/app/
 ADD requirements.txt /usr/src/app/
