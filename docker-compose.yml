@@ -1,6 +1,17 @@
 version: '3.2'
 services: 
-    api-service:
+     postgres:
+        environment:
+            POSTGRES_USER: test
+            POSTGRES_PASSWORD: test
+            POSTGRES_DB: test
+        image: postgres:latest
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./postgres-data:/var/lib/postgresql/data
+
+     api-service:
         build: ./api_rest/
         volumes: 
             - ./api_rest/:/usr/src/app/
@@ -9,3 +20,7 @@ services:
         environment: 
             PORT: 5000
             FLASK_DEBUG: 1
+        depends_on:
+            - postgres
+       
+   
