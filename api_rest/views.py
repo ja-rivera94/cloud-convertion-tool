@@ -76,12 +76,19 @@ class LogInView(Resource):
             db.session.rollback()
             raise BadRequestException(format(ex))
         
+class TaskAllView(Resource):
+    @jwt_required()
+    def get(self):
+        print("get_jwt_identity()")
+        print(get_jwt_identity())
+        
+        return [task_schema.dump(task) for task in Task.query.filter(Task.username == get_jwt_identity())]
+
 class TaskView(Resource):
 
     @jwt_required()
     def get(self, id_task):
-        usuario = User.query.filter(User.id == get_jwt_identity()).first()
-        tarea = Task.query.filter( Task.username == usuario.username, 
+        tarea = Task.query.filter( Task.username == get_jwt_identity(), 
                                     Task.id_task == id_task).first()
         return task_schema.dump(tarea), 200
 
