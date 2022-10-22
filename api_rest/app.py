@@ -6,7 +6,7 @@ from models import db
 from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)  
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://test:test@postgres:5432/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://test:test@postgres:5432/test'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY']='secret-key'
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -38,4 +38,4 @@ def handle_invalid_usage(error):
     return response
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0')
