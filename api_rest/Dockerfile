@@ -1,9 +1,8 @@
+
 FROM python:3
-RUN mkdir /usr/src/app/
-RUN mkdir /tmp/uploads
-COPY . /usr/src/app/
-WORKDIR /usr/src/app/
-ADD requirements.txt /usr/src/app/
+RUN mkdir /backend
+WORKDIR /backend
+ADD requirements.txt /backend/
 RUN pip install -r requirements.txt
+ADD * /backend/
 EXPOSE 5000
-CMD ["python", "app.py"]

@@ -1,9 +1,10 @@
 import os
 from flask_restful import Api
 from flask import Flask, jsonify
-from views import SignInView, BadRequestException, LogInView,TaskView,FileView,TaskAllView
+from views import SignInView, BadRequestException, LogInView,TaskView,FileView,TaskAllView, WelcomeView
 from models import db
 from flask_jwt_extended import JWTManager
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://test:test@postgres:5432/test'
@@ -18,18 +19,15 @@ db.init_app(app)
 db.create_all()
 
 api = Api(app)
-api.add_resource(SignInView, '/auth/signup')
-api.add_resource(LogInView, '/auth/login')
+api.add_resource(WelcomeView, '/api/status')
+api.add_resource(SignInView, '/api/auth/signup')
+api.add_resource(LogInView, '/api/auth/login')
 api.add_resource(TaskView, '/api/tasks/<int:id_task>')
 api.add_resource(FileView, '/api/files/<path:filename>')
 api.add_resource(TaskView, '/api/tasks', endpoint ='/api/tasks')
 api.add_resource(TaskAllView, '/api/tasks/', endpoint ='/api/tasks/')
 
 jwt = JWTManager(app)
-
-@app.route('/')
-def welcome():
-    return jsonify({'status': 'api working'})
 
 @app.errorhandler(BadRequestException)
 def handle_invalid_usage(error):

@@ -1,7 +1,7 @@
 from hashlib import new
 from venv import create
 from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity
-from flask import request, abort, send_from_directory
+from flask import request, abort, send_from_directory, jsonify
 from models import db, User, UserSchema, Task, TaskSchema
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError, StatementError
@@ -214,3 +214,7 @@ class FileView(Resource):
                     "filename": filename
                 }
         return data,404
+
+class WelcomeView(Resource):
+    def get(self):
+        return jsonify({'status': 'api working'})
