@@ -146,7 +146,7 @@ class TaskView(Resource):
                         }
                         return data,404
 
-                tarea.filename_output = tarea.filename_output + "." + request.json["newFormat"]
+                tarea.filename_output = tarea.filename_input + "." + request.json["newFormat"]
                 tarea.status = "uploaded"
                 db.session.commit()
 

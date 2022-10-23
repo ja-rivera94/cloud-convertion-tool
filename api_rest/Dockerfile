@@ -1,8 +1,8 @@
 
 FROM python:3
-RUN apt update
-RUN apt install ffmpeg
-RUN apt install postgresql-client
+#RUN apt update
+#RUN apt install ffmpeg
+#RUN apt install postgresql-client
 RUN mkdir /backend
 WORKDIR /backend
 RUN mkdir /tmp/uploads
