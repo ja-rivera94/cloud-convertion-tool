@@ -50,8 +50,16 @@ for row in "${result[@]}";do
         ((index=index+1))
     done
     
-    echo 'ffmpeg -i /tmp/uploads/'$input_file' /tmp/uploads/'$output_file''
-    echo "update task set status='processed' where id_task='$id_task'"
+    #echo 'ffmpeg -i /tmp/uploads/'$input_file' /tmp/uploads/'$output_file''
+    #echo "update task set status='processed' where id_task='$id_task'"
     ffmpeg -i "/tmp/uploads/$input_file" "/tmp/uploads/$output_file" || true
-    PGPASSWORD=test $PSQL -X -h $DB_HOST -U $DB_USER -c "update task set status='processed' where id_task='$id_task';" || true
+    #PGPASSWORD=test $PSQL -X -h $DB_HOST -U $DB_USER -c "update task set status='processed' where id_task='$id_task';" || true
+    echo 'task already processed' > txtMail.txt
+    curl --ssl-reqd \
+        --url 'smtps://smtp.gmail.com:465' \
+        --user 'minchasrivera@gmail.com:eyfizczllerlvrqu' --ssl-reqd\
+        --mail-from 'minchasrivera@gmail.com' \
+        --mail-rcpt 'jarivera94@hotmail.com' \
+        -T txtMail.txt
+
 done
