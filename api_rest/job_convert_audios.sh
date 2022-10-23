@@ -20,9 +20,6 @@ DB_PASSWORD=test
 index=0
 mapfile result < <(PGPASSWORD=test $PSQL -X -h $DB_HOST -U $DB_USER -c "select t.id_task, t.username, t.filename_input, t.filename_output, u.email from task as t , public.user as u where t.username::text = u.id::text  and status = 'uploaded' " $DB_NAME )
 
-echo ${result[0]%$'\t'*}
-echo ${result[0]#*$'\t'}
-
 for row in "${result[@]}";do
     echo  $row
     echo "-------"
@@ -50,16 +47,22 @@ for row in "${result[@]}";do
         ((index=index+1))
     done
     
-    #echo 'ffmpeg -i /tmp/uploads/'$input_file' /tmp/uploads/'$output_file''
-    #echo "update task set status='processed' where id_task='$id_task'"
-    ffmpeg -i "/tmp/uploads/$input_file" "/tmp/uploads/$output_file" || true
-    #PGPASSWORD=test $PSQL -X -h $DB_HOST -U $DB_USER -c "update task set status='processed' where id_task='$id_task';" || true
-    echo 'task already processed' > txtMail.txt
-    curl --ssl-reqd \
-        --url 'smtps://smtp.gmail.com:465' \
-        --user 'minchasrivera@gmail.com:eyfizczllerlvrqu' --ssl-reqd\
-        --mail-from 'minchasrivera@gmail.com' \
-        --mail-rcpt 'jarivera94@hotmail.com' \
-        -T txtMail.txt
+    re='^[0-9]+$'
+    if ! [[ $id_task =~ $re ]] ; 
+    then
+        echo "error: Not a number" >&2; 
+    else
+        #echo 'ffmpeg -i /tmp/uploads/'$input_file' /tmp/uploads/'$output_file''
+        echo "update task set status='processed' where id_task='$id_task'"
+        ffmpeg -i "/tmp/uploads/$input_file" "/tmp/uploads/$output_file" || true
+        PGPASSWORD=test $PSQL -X -h $DB_HOST -U $DB_USER -c "update task set status='processed' where id_task='$id_task'" || true
+        echo 'task already processed' > txtMail.txt
+        curl --ssl-reqd \
+            --url 'smtps://smtp.gmail.com:465' \
+            --user 'minchasrivera@gmail.com:eyfizczllerlvrqu' --ssl-reqd\
+            --mail-from 'minchasrivera@gmail.com' \
+            --mail-rcpt $email \
+            -T txtMail.txt
+    fi
 
 done

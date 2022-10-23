@@ -81,14 +81,15 @@ class TaskAllView(Resource):
     def get(self):
         print("get_jwt_identity()")
         print(get_jwt_identity())
-        
-        return [task_schema.dump(task) for task in Task.query.filter(Task.username == get_jwt_identity())]
+        identity =  str(get_jwt_identity())
+        return [task_schema.dump(task) for task in Task.query.filter(Task.username == identity)]
 
 class TaskView(Resource):
 
     @jwt_required()
     def get(self, id_task):
-        tarea = Task.query.filter( Task.username == get_jwt_identity(), 
+        identity =  str(get_jwt_identity())
+        tarea = Task.query.filter( Task.username == identity, 
                                     Task.id_task == id_task).first()
         return task_schema.dump(tarea), 200
 
@@ -116,8 +117,8 @@ class TaskView(Resource):
 
     @jwt_required()
     def put(self, id_task):
-        usuario = User.query.filter(User.id == get_jwt_identity()).first()
-        tarea = Task.query.filter( Task.username == usuario.username, 
+        identity =  str(get_jwt_identity())
+        tarea = Task.query.filter( Task.username == identity, 
                                     Task.id_task == id_task).first()
         if not "newFormat" in request.json:
             data = {
@@ -153,8 +154,8 @@ class TaskView(Resource):
         
     @jwt_required()
     def delete(self,id_task):
-        miusuario = "oscar"
-        tarea = Task.query.filter(Task.username == miusuario,
+        identity =  str(get_jwt_identity())
+        tarea = Task.query.filter(Task.username == identity,
                                  Task.id_task == id_task).first()
         if tarea is None:
             data = {
