@@ -45,6 +45,6 @@ Una vez los servicios se estén ejecutando podemos hacer pruebas de las funcione
 
 Para consumir alguno de los servicios implementados, importe la siguiente Collection:
 
-<a href="https://github.com/ja-rivera94/cloud-convertion-tool/wiki/image/api-rest.postman_collection.json"  />
+<a href="https://github.com/ja-rivera94/cloud-convertion-tool/wiki/image/api-rest.postman_collection.json"> </a>
 
 
