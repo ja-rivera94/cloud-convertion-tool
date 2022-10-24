@@ -23,6 +23,34 @@ O si prefiere correr la aplicación en background se debe ejecutar el siguiente 
 docker-compose up -d
 ```
 ## Descripción de los servicios
+
+### GET METHOD ENDPOINT API STATUS
+```
+curl --location --request GET 'http://127.0.0.1:5000/api/status'
+```
+
+### POST METHOD ENDPOINT SIGNUP
+```
+curl --location --request POST 'http://127.0.0.1:5000/api/auth/signup' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "carlos",
+    "password1": "123",
+    "password2": "123",
+    "email": "carlos@gmail.com"
+}'
+```
+
+### POST METHOD ENDPOINT LOGIN
+```
+curl --location --request POST 'http://127.0.0.1:5000/api/auth/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "carlos",
+    "password": "123"
+}'
+```
+
 ### POST METHOD ENDPOINT CREATE TEASK
 ```
 curl --location --request POST 'http://127.0.0.1:5000/api/tasks' \
@@ -44,3 +72,24 @@ curl --location --request GET 'http://127.0.0.1:5000/api/tasks/116' \
 --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjM4ODM5MywianRpIjoiMjg5YjZkY2MtNmQwMy00ZWM2LThiNjctMDFhZTIyOTE5N2MyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MTIsIm5iZiI6MTY2NjM4ODM5MywiZXhwIjoxNjY2Mzg5MjkzfQ.eFFCIrr39Ym7Xr8Hz8_cC5m6IlxaVRrh277qLQJj08E'
 ```
 
+### PUT METHOD TO SPECIFIC TASK 
+```
+curl --location --request PUT 'http://127.0.0.1:5000/api/tasks/13' \
+--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjU2NjgzOCwianRpIjoiZjQ2MmUxNjktZDZhMC00ZGQyLWJjOTItMWNhODg2ZDczY2Y5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjY2NTY2ODM4LCJleHAiOjE2NjY1Njc3Mzh9.OgRRazYWaZ5mHK6MPBSvPsX8VxinKQ33JZwRIyA5RMQ' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "newFormat": "aac"
+}'
+```
+
+### DELETE METHOD TO SPECIFIC TASK 
+```
+curl --location --request DELETE 'http://127.0.0.1:5000/api/tasks/10' \
+--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjU1Nzg0NSwianRpIjoiMWQ0NTAzYmItZDYyNS00NDczLWEyY2ItMzcyZDdkMDQyM2EyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjY2NTU3ODQ1LCJleHAiOjE2NjY1NTg3NDV9.qLlMwyb1nRRol-OioHChzcU2kpmp1Z4bco2v50FwTqI'
+```
+
+### GET METHOD TO DOWNLOAD FILE
+```
+curl --location --request GET 'http://127.0.0.1:5000/api/files/5bf0618e-e92d-4da1-abeb-783f587f25c8-file_example_MP3_5MG.mp3.aac' \
+--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjU1Nzg0NSwianRpIjoiMWQ0NTAzYmItZDYyNS00NDczLWEyY2ItMzcyZDdkMDQyM2EyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjY2NTU3ODQ1LCJleHAiOjE2NjY1NTg3NDV9.qLlMwyb1nRRol-OioHChzcU2kpmp1Z4bco2v50FwTqI'
+```
