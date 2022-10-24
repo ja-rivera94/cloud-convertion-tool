@@ -2,7 +2,7 @@
 
 ## Instalación
 
-Para ejecutar el proyecto localmente, es necesario instalar [Oracle VirtualBox](https://www.virtualbox.org/wiki/Downloads) en su pc. Una vez instalado, se debe descargar la imagen de la máquina virtual ([mvzip](https://uniandes-my.sharepoint.com/:u:/g/personal/ci_cortesg_uniandes_edu_co/EQMbaoWx1yZOl5cMyrQ-8rgBqzCjd4HWqfLmfYs1vbWFZQ?e=16NHt7)) e importarla en Virtualbox. Para importar la imagen se deben seguir los siguientes pasos:
+Para ejecutar el proyecto localmente, es necesario instalar [Oracle VirtualBox](https://www.virtualbox.org/wiki/Downloads) en su pc. Una vez instalado, se debe descargar la imagen de la máquina virtual ([mv.zip](https://uniandes-my.sharepoint.com/:u:/g/personal/h_foreror_uniandes_edu_co/EcxSKsYE47FNh70qsgknHjsBgUchJnk9wppmQvWWsy4Izw?e=IZSYFL)) e importarla en Virtualbox. Para importar la imagen se deben seguir los siguientes pasos:
 
 1. Descargar el archivo mv.zip
 
