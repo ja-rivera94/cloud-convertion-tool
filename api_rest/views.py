@@ -17,7 +17,7 @@ task_schema = TaskSchema()
 
 #MP3 - ACC - OGG - WAV – WMA
 ALLOWED_EXTENSIONS = set(['mp3', 'aac', 'ogg', 'wav', 'wma'])
-UPLOAD_FOLDER = '/tmp/uploads'
+UPLOAD_FOLDER = '/nfs/general/uploads'
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
