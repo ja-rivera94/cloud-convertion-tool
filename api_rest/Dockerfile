@@ -11,3 +11,4 @@ ADD requirements.txt /backend/
 RUN pip install -r requirements.txt
 ADD * /backend/
 EXPOSE 5000
+CMD ["python", "app.py"]
