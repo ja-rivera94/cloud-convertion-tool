@@ -5,4 +5,4 @@ set size ratio 0.6
 set grid y
 set xlabel "Nro Peticiones"
 set ylabel "Tiempo de respuesta (ms)"
-plot "login.csv" using 9 smooth sbezier with lines title "maquina virtual"
+plot "signup.csv" using 9 smooth sbezier with lines title "GCP"
