@@ -101,3 +101,17 @@ Una vez los servicios se estén ejecutando podemos hacer pruebas de las funcione
 Para consumir alguno de los servicios implementados, importe la siguiente Collection:
 
 [api-rest.postman_collection.json](https://github.com/ja-rivera94/cloud-convertion-tool/wiki/image/api-rest.postman_collection.json) 
+
+
+## Docker ejecucion
+
+crear la imagen 
+
+```
+docker build -t cloud-convertion-tool_api-service .
+```
+
+correr el contenedor 
+```
+docker run -t -d -v /nfs/general:/nfs/general -p 5000:5000 --name cloud-convertion-tool-service cloud-convertion-tool_api-service:latest
+```
