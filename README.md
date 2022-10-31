@@ -115,3 +115,14 @@ correr el contenedor
 ```
 docker run -t -d -v /nfs/general:/nfs/general -p 5000:5000 --name cloud-convertion-tool-service cloud-convertion-tool_api-service:latest
 ```
+
+
+## configuracion job 
+
+instalar crontab
+
+ejecutar crontab -e y crear el siguiente job 
+
+```
+*/2 * * * * sudo /bin/bash /app/cloud-convertion-tool/api_rest/job_convert_audios.sh >> /var/logs/audios_convert 2>&1
+```
