@@ -4,3 +4,51 @@ gcloud compute instance-templates create cloud-convertion-tool-template \
     --image-project=debian-cloud \
     --boot-disk-size=10GB  \
     --metadata-from-file startup-script=startup.sh
+
+
+gcloud compute instance-groups managed create cloud-convertion-tool-bakend-instance-group \
+  --base-instance-name cloud-convertion-tool-bakend \
+  --size 1 \
+  --template cloud-convertion-tool-template
+
+gcloud compute instances list
+
+gcloud compute instance-groups managed set-autoscaling cloud-convertion-tool-bakend-instance-group \
+  --min-num-replicas 1 \
+  --max-num-replicas 3 \
+  --target-cpu-utilization 0.70 \
+  --cool-down-period 90 
+
+gcloud compute target-pools create cloud-convertion-tool-entry-point
+
+gcloud compute instance-groups managed set-target-pools cloud-convertion-tool-bakend-instance-group \
+        --target-pools cloud-convertion-tool-entry-point
+
+gcloud compute firewall-rules create www-firewall --allow tcp:8080
+
+gcloud compute forwarding-rules create cloud-convertion-tool-lb \
+--region us-central1 \
+--ports=8080 \
+--target-pool cloud-convertion-tool-entry-point
+
+gcloud compute forwarding-rules list
+
+gcloud compute http-health-checks create http-healt-check-convertion-tool-backend \
+--port=8080 \
+--request-path=/api/status
+
+gcloud compute instance-groups managed set-named-ports cloud-convertion-tool-bakend-instance-group --named-ports http:8080
+
+
+gcloud compute backend-services create cloud-convertion-tool-backend-service --protocol HTTP --http-health-checks http-healt-check-convertion-tool-backend --global
+
+
+gcloud compute backend-services add-backend cloud-convertion-tool-backend-service --instance-group cloud-convertion-tool-bakend-instance-group --instance-group-zone us-central1-a --global
+
+gcloud compute url-maps create convertion-tool-url --default-service cloud-convertion-tool-backend-service
+ 
+gcloud compute target-http-proxies create http-lb-proxy --url-map convertion-tool-url
+
+
+gcloud compute forwarding-rules create http-content-rule --global --target-http-proxy http-lb-proxy --ports 8080
+
