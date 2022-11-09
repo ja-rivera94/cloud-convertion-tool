@@ -93,3 +93,36 @@ curl --location --request DELETE 'http://127.0.0.1:5000/api/tasks/10' \
 curl --location --request GET 'http://127.0.0.1:5000/api/files/5bf0618e-e92d-4da1-abeb-783f587f25c8-file_example_MP3_5MG.mp3.aac' \
 --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjU1Nzg0NSwianRpIjoiMWQ0NTAzYmItZDYyNS00NDczLWEyY2ItMzcyZDdkMDQyM2EyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjY2NTU3ODQ1LCJleHAiOjE2NjY1NTg3NDV9.qLlMwyb1nRRol-OioHChzcU2kpmp1Z4bco2v50FwTqI'
 ```
+
+## Pruebas
+
+Una vez los servicios se estén ejecutando podemos hacer pruebas de las funciones expuestas por estos. El ejemplo no implementa una interfaz de usuario por lo que debemos utilizar un programa que permita consumir servicios REST. Se sugiere utilizar [Postman](https://www.postman.com/downloads/) para ejecutar los servicios del ejemplo, por lo que debe descargarlo haciendo clic sobre el enlace anterior.
+
+Para consumir alguno de los servicios implementados, importe la siguiente Collection:
+
+[api-rest.postman_collection.json](https://github.com/ja-rivera94/cloud-convertion-tool/wiki/image/api-rest.postman_collection.json) 
+
+
+## Docker ejecucion
+
+crear la imagen 
+
+```
+docker build -t cloud-convertion-tool_api-service .
+```
+
+correr el contenedor 
+```
+docker run -t -d -v /nfs/general:/nfs/general -p 5000:5000 --name cloud-convertion-tool-service cloud-convertion-tool_api-service:latest
+```
+
+
+## configuracion job 
+
+instalar crontab
+
+ejecutar crontab -e y crear el siguiente job 
+
+```
+*/2 * * * * sudo /bin/bash /app/cloud-convertion-tool/api_rest/job_convert_audios.sh >> /var/logs/audios_convert 2>&1
+```

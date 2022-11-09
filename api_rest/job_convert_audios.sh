@@ -12,7 +12,7 @@ arr_file_output=()
 PSQL=/usr/bin/psql
 
 DB_USER=test
-DB_HOST=postgres
+DB_HOST=10.127.0.3
 DB_NAME=test
 DB_PASSWORD=test
 
@@ -52,9 +52,8 @@ for row in "${result[@]}";do
     then
         echo "error: Not a number" >&2; 
     else
-        #echo 'ffmpeg -i /tmp/uploads/'$input_file' /tmp/uploads/'$output_file''
         echo "update task set status='processed' where id_task='$id_task'"
-        ffmpeg -i "/tmp/uploads/$input_file" "/tmp/uploads/$output_file" || true
+        ffmpeg -i "/nfs/general/uploads/$input_file" "/nfs/general/uploads/$output_file" || true
         PGPASSWORD=test $PSQL -X -h $DB_HOST -U $DB_USER -c "update task set status='processed' where id_task='$id_task'" || true
         echo 'task already processed' > txtMail.txt
         curl --ssl-reqd \

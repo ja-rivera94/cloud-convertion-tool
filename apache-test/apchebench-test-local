@@ -1,0 +1,17 @@
+ab -n 1000 -c 10 -p signup.json  -T application/json -rk -g signup.csv 'http://127.0.0.1:5000/api/auth/signup' 
+ab -n 1000 -c 20 -p signup.json  -T application/json -rk -g signup.csv 'http://127.0.0.1:5000/api/auth/signup' 
+ab -n 1000 -c 30 -p signup.json  -T application/json -rk -g signup.csv 'http://127.0.0.1:5000/api/auth/signup' 
+ab -n 1000 -c 40 -p signup.json  -T application/json -rk -g signup.csv 'http://127.0.0.1:5000/api/auth/signup' 
+ab -n 1000 -c 150 -p signup.json  -T application/json -rk -g signup.csv 'http://127.0.0.1:5000/api/auth/signup' 
+
+ab -n 10 -c 1 -p login.json  -T application/json -rk -g login.csv 'http://127.0.0.1:5000/api/auth/login' 
+
+ab -n 10 -c 1 -p create_task.txt -T "multipart/form-data; boundary=1234567890" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjU2ODQ0MSwianRpIjoiZDNjYjMyMzQtMmU2ZS00ZmJiLWE5OWYtNjUxYzY4NzFiZjEyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjY2NTY4NDQxLCJleHAiOjE2NjY1NjkzNDF9.mhdQxQuUnqU3tvpmWsXoAy4N65IY98Hk8_qgHjlGHu4" -rk -g task_post.csv 'http://127.0.0.1:5000/api/tasks'
+
+ab -n 10 -c 1 -p create_task_binary.txt -T "multipart/form-data; boundary=1234567890" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjU2ODQ0MSwianRpIjoiZDNjYjMyMzQtMmU2ZS00ZmJiLWE5OWYtNjUxYzY4NzFiZjEyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjY2NTY4NDQxLCJleHAiOjE2NjY1NjkzNDF9.mhdQxQuUnqU3tvpmWsXoAy4N65IY98Hk8_qgHjlGHu4" -rk -g task_post.csv 'http://127.0.0.1:5000/api/tasks'
+
+ab -n 1000 -c 30 -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjU2NjAxMCwianRpIjoiY2ZkMDEyYjctYmE3NS00ZTAzLTgyM2YtOTMxNzg5MjU5YzEwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjY2NTY2MDEwLCJleHAiOjE2NjY1NjY5MTB9.KYetTSas_5cwQpzS8ygc9u87A7oqm0tiky1rJdoOMKk" -rk -g tasks_get.csv 'http://127.0.0.1:5000/api/tasks/'
+
+ab -n 10 -c 1 -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjU2NjAxMCwianRpIjoiY2ZkMDEyYjctYmE3NS00ZTAzLTgyM2YtOTMxNzg5MjU5YzEwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjY2NTY2MDEwLCJleHAiOjE2NjY1NjY5MTB9.KYetTSas_5cwQpzS8ygc9u87A7oqm0tiky1rJdoOMKk" -rk -g tasks_get_id.csv 'http://127.0.0.1:5000/api/tasks/13'
+
+ab -n 10 -c 1 -u newFormat.json -T application/json -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2NjU2NjgzOCwianRpIjoiZjQ2MmUxNjktZDZhMC00ZGQyLWJjOTItMWNhODg2ZDczY2Y5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNjY2NTY2ODM4LCJleHAiOjE2NjY1Njc3Mzh9.OgRRazYWaZ5mHK6MPBSvPsX8VxinKQ33JZwRIyA5RMQ" -rk -g tasks_put_id.csv 'http://127.0.0.1:5000/api/tasks/13'

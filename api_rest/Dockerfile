@@ -1,13 +1,11 @@
 
 FROM python:3
-RUN apt-get -y update
-RUN apt-get -y upgrade
-RUN apt-get install -y ffmpeg
-RUN apt-get install -y postgresql-client
 RUN mkdir /backend
+RUN mkdir -p /nfs/general/uploads/
 WORKDIR /backend
 RUN mkdir /tmp/uploads
 ADD requirements.txt /backend/
 RUN pip install -r requirements.txt
 ADD * /backend/
 EXPOSE 5000
+CMD ["python", "app.py"]
