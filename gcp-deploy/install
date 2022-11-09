@@ -1,0 +1,6 @@
+gcloud compute instance-templates create cloud-convertion-tool-template \
+    --machine-type=c2d-standard-2 \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --boot-disk-size=10GB  \
+    --metadata-from-file startup-script=startup.sh
