@@ -9,7 +9,8 @@ import os
 from os import remove,path
 from werkzeug.utils import secure_filename
 import uuid
-
+from gcloud import storage
+from oauth2client.service_account import ServiceAccountCredentials
 import datetime
 
 user_schema = UserSchema()
@@ -17,7 +18,16 @@ task_schema = TaskSchema()
 
 #MP3 - ACC - OGG - WAV – WMA
 ALLOWED_EXTENSIONS = set(['mp3', 'aac', 'ogg', 'wav', 'wma'])
-UPLOAD_FOLDER = '/nfs/general/uploads'
+UPLOAD_FOLDER = 'archivos/originales'
+PROCESED_FOLDER = 'archivos/procesados'
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]= 'storage.json'
+
+project_id = 'cloud-convertion-tool'
+storage_client  = storage.Client(project_id)
+bucket_name = 'cloud-convertion-tool-audio'
+bucket = storage_client.bucket(bucket_name)
+
+
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -109,9 +119,22 @@ class TaskView(Resource):
             task = Task(create_at = datetime.datetime.now(), status= "uploaded", filename_input=filename, filename_output=filename_output, username = get_jwt_identity(), guid = guid)
             db.session.add(task)
             db.session.commit()
-
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
-            return {'message' : 'File successfully uploaded'}, 201
+            #destination_blob_name = filename
+            destination_blob_name = UPLOAD_FOLDER + '/'+filename
+#            blob = bucket.blob('file_example_WAV_2MG.wav')
+            #new_blob = bucket.rename_blob(blob, destination_blob_name)
+#            blob = bucket.delete_blob('901baf03-4389-466a-b37f-b1679f495246-file_example_MP3_5MG.mp3')
+           
+            
+            blob = bucket.blob(destination_blob_name)
+            blob.upload_from_file(file)
+            
+            # Opcion 1 guardar subir y borrar
+            #file.save(filename)
+            #blob.upload_from_filename(filename)
+            #remove(filename)
+            
+            return {'message' :  f"File uploaded to {destination_blob_name} in bucket {bucket_name}."}, 201
         else:
             return {'message' : 'Not Allowed file type'}, 400
 
@@ -133,12 +156,14 @@ class TaskView(Resource):
                 }
                 return data, 400
             else:
-                archivo = path.join(UPLOAD_FOLDER, tarea.filename_input)
+                archivo = UPLOAD_FOLDER + '/'+ tarea.filename_input
                 estado = tarea.status
                 mitarea = tarea.id_task
                 if estado == "processed":
-                    if path.exists(archivo):
-                        remove(archivo)
+                    blob = bucket.blob(archivo)
+                    
+                    if blob.exists():
+                        bucket.delete_blob(archivo)
                     else:
                         data = {
                             "message": "File 1 not found "+ archivo, 
@@ -164,16 +189,18 @@ class TaskView(Resource):
             }
             return data,404
         else:
-            archivo = path.join(UPLOAD_FOLDER, tarea.filename_input)
-            archivo2 = path.join(UPLOAD_FOLDER, tarea.filename_output)
+            archivo = UPLOAD_FOLDER + '/'+ tarea.filename_input
+            archivo2 =PROCESED_FOLDER + '/'+ tarea.filename_output
             estado = tarea.status
             mitarea = tarea.id_task
             if estado == "processed":
-                if path.exists(archivo):
-                    if path.exists(archivo2):
-                        remove(archivo)
-                        remove(archivo2)
-                        if not path.exists(archivo) and not path.exists(archivo2):
+                blob = bucket.blob(archivo)
+                if blob.exists(archivo):
+                    blob2 = bucket.blob(archivo)
+                    if blob2.exists(archivo2):
+                        bucket.delete_blob(archivo)
+                        bucket.delete_blob(archivo2)
+                        if not  blob.exists(archivo) and not blob2.exists(archivo2):
                             data = {
                                 "message": "Deleted files "+archivo + " " + archivo2, 
                                 "id_task": mitarea

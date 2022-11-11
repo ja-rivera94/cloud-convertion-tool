@@ -22,3 +22,5 @@ SQLAlchemy
 Werkzeug
 gunicorn
 psycopg2-binary
+google-cloud-storage
+gcloud
