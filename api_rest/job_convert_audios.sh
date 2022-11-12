@@ -53,9 +53,19 @@ for row in "${result[@]}";do
         echo "error: Not a number" >&2; 
     else
         echo "update task set status='processed' where id_task='$id_task'"
-        ffmpeg -i "/nfs/general/uploads/$input_file" "/nfs/general/uploads/$output_file" || true
+        gsutil cp "gs://cloud-convertion-tool-audio/archivos/originales/$input_file" "/tmp/$input_file"
+        ffmpeg -i "/tmp/$input_file" "/tmp/$output_file" || true
+        gsutil cp "/tmp/$output_file" "gs://cloud-convertion-tool-audio/archivos/procesados/$output_file"
+        rm "/tmp/$input_file"
+        rm "/tmp/$output_file"        
         PGPASSWORD=test $PSQL -X -h $DB_HOST -U $DB_USER -c "update task set status='processed' where id_task='$id_task'" || true
-        python SendMail_API.py "Task processed"
+        echo 'task already processed' > txtMail.txt
+        curl --ssl-reqd \
+            --url 'smtps://smtp.gmail.com:465' \
+            --user 'minchasrivera@gmail.com:eyfizczllerlvrqu' --ssl-reqd\
+            --mail-from 'minchasrivera@gmail.com' \
+            --mail-rcpt $email \
+            -T txtMail.txt
     fi
 
 done
