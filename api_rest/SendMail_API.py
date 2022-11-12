@@ -4,7 +4,7 @@ import sys
 
 pa = sys.argv[1]
 
-sg = sendgrid.SendGridAPIClient('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')
+sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
 data = {
   "personalizations": [
     {
