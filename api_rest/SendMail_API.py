@@ -10,14 +10,14 @@ data = {
     {
       "to": [
         {
-          "email": "miso.uniandes.estudiante@gmail.com"
+          "email": "toolcloudconversion@gmail.com"
         }
       ],
       "subject": "Task already processed"
     }
   ],
   "from": {
-    "email": "miso.uniandes.estudiante@gmail.com"
+    "email": "toolcloudconversion@gmail.com"
   },
   "content": [
     {
