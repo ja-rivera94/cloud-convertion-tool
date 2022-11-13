@@ -16,9 +16,12 @@ gcloud compute instances list
 gcloud compute instance-groups managed set-autoscaling cloud-convertion-tool-bakend-instance-group \
   --min-num-replicas 1 \
   --max-num-replicas 3 \
-  --target-cpu-utilization 0.70 \
+  --time-window 60 \
+  --target-cpu-utilization 0.60 \
   --cool-down-period 90 
 
+
+gcloud compute instance-groups managed resize cloud-convertion-tool-bakend-instance-group --size 1
 gcloud compute target-pools create cloud-convertion-tool-entry-point
 
 gcloud compute instance-groups managed set-target-pools cloud-convertion-tool-bakend-instance-group \
