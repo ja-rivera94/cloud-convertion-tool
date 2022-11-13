@@ -53,13 +53,14 @@ for row in "${result[@]}";do
         echo "error: Not a number" >&2; 
     else
         echo "update task set status='processed' where id_task='$id_task'"
+        gcloud auth activate-service-account --key-file /app/cloud-convertion-tool/api_rest/storage.json
         gsutil cp "gs://cloud-convertion-tool-audio/archivos/originales/$input_file" "/tmp/$input_file"
         ffmpeg -i "/tmp/$input_file" "/tmp/$output_file" || true
         gsutil cp "/tmp/$output_file" "gs://cloud-convertion-tool-audio/archivos/procesados/$output_file"
         rm "/tmp/$input_file"
         rm "/tmp/$output_file"        
         PGPASSWORD=test $PSQL -X -h $DB_HOST -U $DB_USER -c "update task set status='processed' where id_task='$id_task'" || true
-        python3 SendMail_API.py "Task processed"
+        python3 /app/cloud-convertion-tool/api_rest/SendMail_API.py "Task processed"
     fi
 
 done
