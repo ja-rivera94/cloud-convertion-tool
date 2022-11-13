@@ -60,7 +60,7 @@ for row in "${result[@]}";do
         rm "/tmp/$input_file"
         rm "/tmp/$output_file"        
         PGPASSWORD=test $PSQL -X -h $DB_HOST -U $DB_USER -c "update task set status='processed' where id_task='$id_task'" || true
-        python3 SendMail_API.py "Task processed"
+        python3 /app/cloud-convertion-tool/api_rest/SendMail_API.py "Task processed"
     fi
 
 done
