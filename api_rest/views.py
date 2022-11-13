@@ -1,7 +1,7 @@
 from hashlib import new
 from venv import create
 from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity
-from flask import request, abort, send_from_directory, jsonify
+from flask import request, abort, send_from_directory, jsonify, Response
 from models import db, User, UserSchema, Task, TaskSchema
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError, StatementError
@@ -234,9 +234,17 @@ class TaskView(Resource):
 
 class FileView(Resource):    
     @jwt_required()
-    def get(self,filename):    
-        if path.isfile(path.join(UPLOAD_FOLDER, filename)):
-            return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=True)
+    def get(self,filename): 
+        blob = bucket.get_blob('archivos/'+filename)   
+        if blob :
+            content_type = None
+            try:
+                content_type = blob.content_type
+            except:
+                pass
+            file = blob.download_as_string()
+            print(type(file), "downloaded type")
+            return Response(file,  mimetype=content_type)
         data = {
                     "message":"File not found ", 
                     "filename": filename
