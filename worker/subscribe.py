@@ -125,7 +125,7 @@ def procesa_tarea(tarea):
             cursor.close()
             
         close_connection(miconexion)
-        #enviar_correo("Convirtiendo "+row[2],tarea)
+        enviar_correo("Convirtiendo "+row[2],tarea)
         return True
     except (Exception, psycopg2.Error) as error:
         print("Error en el proceso ", error)
