@@ -12,6 +12,9 @@ import uuid
 from gcloud import storage
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
+import logging
+from concurrent import futures
+from google.cloud import pubsub_v1
 
 user_schema = UserSchema()
 task_schema = TaskSchema()
@@ -27,6 +30,11 @@ storage_client  = storage.Client(project_id)
 bucket_name = 'cloud-convertion-tool-audio'
 bucket = storage_client.bucket(bucket_name)
 
+logging.basicConfig(level=logging.INFO)
+topic_id = "cloud-convertion-tool"
+
+publisher = pubsub_v1.PublisherClient()
+topic_path = publisher.topic_path(project_id, topic_id)
 
 
 def allowed_file(filename):
@@ -105,6 +113,7 @@ class TaskView(Resource):
 
     @jwt_required()
     def post(self):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"]= 'storage.json'
         fileName = 'fileName'
         if fileName not in request.files:
             return {'message' : 'No file part in the request'}, 400
@@ -119,20 +128,17 @@ class TaskView(Resource):
             task = Task(create_at = datetime.datetime.now(), status= "uploaded", filename_input=filename, filename_output=filename_output, username = get_jwt_identity(), guid = guid)
             db.session.add(task)
             db.session.commit()
-            #destination_blob_name = filename
+
             destination_blob_name = UPLOAD_FOLDER + '/'+filename
-#            blob = bucket.blob('file_example_WAV_2MG.wav')
-            #new_blob = bucket.rename_blob(blob, destination_blob_name)
-#            blob = bucket.delete_blob('901baf03-4389-466a-b37f-b1679f495246-file_example_MP3_5MG.mp3')
-           
-            
             blob = bucket.blob(destination_blob_name)
             blob.upload_from_file(file)
             
-            # Opcion 1 guardar subir y borrar
-            #file.save(filename)
-            #blob.upload_from_filename(filename)
-            #remove(filename)
+            #Publisher
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]= 'pub-sub.json'
+            data_str = f"{guid}"
+            data = data_str.encode("utf-8")
+            future = publisher.publish(topic_path, data)
+            print(future.result())
             
             return {'message' :  f"File uploaded to {destination_blob_name} in bucket {bucket_name}."}, 201
         else:
