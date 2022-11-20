@@ -1,0 +1,24 @@
+#Create template
+gcloud compute instance-templates create cloud-convertion-tool-template-worker \
+    --machine-type=c2d-standard-2 \
+    --image-family=debian-11 \
+    --image-project=debian-cloud \
+    --boot-disk-size=10GB  \
+    --metadata-from-file startup-script=startup.sh
+    
+
+
+#Create instance group
+gcloud compute instance-groups managed create cloud-convertion-tool-worker-instance-group \
+  --base-instance-name cloud-convertion-tool-worker \
+  --size 1 \
+  --template cloud-convertion-tool-template-worker
+
+# Create policy auto scaling
+
+gcloud compute instance-groups managed set-autoscaling cloud-convertion-tool-worker-instance-group \
+  --min-num-replicas 1 \
+  --max-num-replicas 3 \
+  --target-cpu-utilization 0.10 \
+  --cool-down-period 45 
+
