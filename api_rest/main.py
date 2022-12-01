@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://test:test@10.127.0.3:5432/test'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://wimqxrol:FNZQXRqbpC6DmGj-zQLFpy21_hAXP_Cp@lucky.db.elephantsql.com/wimqxrol'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
